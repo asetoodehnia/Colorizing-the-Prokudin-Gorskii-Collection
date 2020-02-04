@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>CS194-26 Proj1</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        div {
+            padding-bottom: 8px;
+        }
+        .caption {
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Adel Setoodehnia | CS194-26 Project 1</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#Intro">Introduction</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#Methods">Methodology</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#B&W">Bells & Whistles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#Results">Results</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container">
+        <!-- <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-1"></div>
+        </div> -->
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <p></p>
+                <h3>Colorizing the Prokudin-Gorskii Collection</h3>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">
+                <h3 class="text-center"></h3>
+                <img src="pictures/emir_b.jpg" class="mx-auto d-block" style="width:110%">
+                <p class="text-center"></p>
+            </div>
+            <div class="col-sm-4">
+                <h3 class="text-center"></h3>
+                <img src="pictures/emir_r.jpg" class="mx-auto d-block" style="width:85%">
+                <p class="text-center"></p>
+            </div>
+            <div class="col-sm-3">
+                <h3 class="text-center"></h3>
+                <img src="pictures/emir_g.jpg" class="mx-auto d-block" style="width:110%">
+                <p class="text-center"></p>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        
+        <div class="row" id=Intro>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <h3>Introduction</h3>
+                <p>
+                    A long time ago, a man by the name of <a href="https://en.wikipedia.org/wiki/Sergey_Prokudin-Gorsky"
+                        target="_blank" style="text-decoration:none">
+                        <font color="#0078FF">Sergei Mikhailovich Prokudin-Gorskii</font>
+                    </a> (1863-1944) went around Russia and recorded three exposures of every scene onto a glass plate using a
+                    <font color="#FE3562">red</font>, a <font color="#03B600">green</font>, and a <font color="#0078FF">blue
+                    </font> filter. We're talking people, buildings, landscapes, railroads, bridges, and everything in between!
+                    To his dismay, nobody was ever able to colorize these images until well after his death. This project aims to do
+                    Sergei proud by developing an algorithm to produce a color image with as few
+                    visual artifacts as possible.
+                </p>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        
+        
+        <div class="row" id=Methods>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-11">
+                <h3>Methodology</h3>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-8">
+                <h5>Naive Search</h5>
+                <p>
+                    For the naive implementation, I found that the easiest way to align the different channels was to
+                    exhaustively search over a window of possible displacements. Through searching over every possible
+                    displacement vector, I then used two different metrics for scoring the images, and chose the displacement
+                    which yielded the best score.
+                </p>
+                <p>
+                    As you can see on the right, the images first need to be split into their three color channels. After doing
+                    so, I realized there were some borders on around each image. I thus decided to remove the outer 10% of each
+                    image to make them less noisy for the purposes of the algorithm. I then proceeded to use a [-15, 15] pixel
+                    search range (as recommended by the project spec) and used the following metrics to align my color channels:
+                </p>
+                <h6>SSD (Sum of Squared Differences):</h6>
+                <p>$$SSD(\vec{x}, \vec{y}) = \sum_{i}\sum_{j}(\vec{x}_{i,j} - \vec{y}_{i,j})^2$$</p>
+                <h6>NCC (Normalized Cross Correlation):</h6>
+                <p>$$NCC(\vec{x}, \vec{y}) = \langle\frac{\vec{x}}{||\vec{x}||}, \frac{\vec{y}}{||\vec{y}||}\rangle$$</p>
+            </div>
+            <div class="col-sm-2">
+                <img src="pictures/cathedral.jpg" class="mx-auto d-block" style="width:120%">
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <p>
+                    Let's take a look at the result of this method on the cathedral as seen above.
+                </p>
+                <img src="pictures/cathedral_color.jpg" class="mx-auto d-block" style="width:50%">
+                <p></p>
+                <p>
+                    Nice, looks pretty good!  But how about higher resolution images..?
+                </p>
+                <h5>Pyramid Search</h5>
+                <p>
+                    The aforementioned method worked well on images of around 400 pixels by 400 pixels.  However, since many of the images are of a much higher resolution (e.g. 3,000 pixels by 3,000 pixels), I found that the naive search became ridiculously expensive since the search space had become too large!  To combat this, I decided to use an <a href="https://en.wikipedia.org/wiki/Pyramid_(image_processing)" target="_blank" style="text-decoration:none"><font color="#0078FF">image pyramid</font></a>.  
+                </p>
+                <p>
+                    By taking a high resultion image and simply rescaling it to a lower resolution image, the search space can be vastly decreased 
+                    to make things more computationally feasible. Using this logic, my algorithm <font color="#FE3562">(i)</font> <b>rescales the image 
+                    by halves until the dimension is roughly 400 pixels by 400 pixels again, and runs the naive algorithm using a [-15, 15] 
+                    pixel search range</b>. After obtaining the results from this, it <font color="#FE3562">(ii)</font> <b>propagates back up the 
+                    recursive stack and keeps running the search method as it rescales the image back to its original resolution</b>, but at a small 
+                    search range so as not to be computationally expensive. This way, the algorithm will zero in on the best displacement vector as it works 
+                    our way back up the recursive stack as opposed to running an exhaustive search at just the very top level.
+                </p>
+                <p>
+                    Here is a small snippet of the python code for the described algorithm:
+                </p>
+                <img src="pictures/code_snippet.png" class="mx-auto d-block" style="width:80%">
+                <p></p>
+                <p>
+                    Now let's try this on a higher resolution image, <font color="#FE3562">onion_church.tif</font>:
+                </p>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <!-- <div class="col-sm-4">
+                <img src="pictures/onion_church.jpg" class="mx-auto d-block" style="width:55%">
+            </div> -->
+            <div class="col-sm-10">
+                <img src="pictures/onion_church_color.jpg" class="mx-auto d-block" style="width:70%">
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                This looks really good! Now let's try it on Emir of Bukhara:
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <!-- <div class="col-sm-4">
+                <img src="pictures/emir.jpg" class="mx-auto d-block" style="width:55%">
+            </div> -->
+            <div class="col-sm-10">
+                <img src="pictures/emir_bad.jpg" class="mx-auto d-block" style="width:70%">
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                As you can see, this didn't align quite well with the current algorithm. This is due to the different brightness values between the color channels of this photograph.  So to fix this, I incorporate a few bells and whistles...
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row" id=B&W>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <h3>Bells & Whistles</h3>
+                <p>
+                    After thinking about the issue for some time, I realized that if the brightness is the issue, I just need a way to remove the brightness from the equation.  I hypothesized that if instead of passing in the raw images to be aligned, I were to pass them through an edge detection filter, the brightness would no longer be an issue!  The algorithm would then just do its work to align based on solely the <font color="#FE3562"><i>emphasized edges</i></font> of Emir.
+                </p>
+                <p>
+                    In order to do this, two 3x3 convolutional filters are used to estimate the gradients (derivatives) of the image, one for horizontal and one for vertical.
+                </p>
+                <p>
+                    $$V = \begin{bmatrix}
+                    1 & 0 & -1\\
+                    2 & 0 & -2\\
+                    1 & 0 & -1
+                    \end{bmatrix}\ \ \ \ \ H = \begin{bmatrix}
+                    1 & 2 & 1\\
+                    0 & 0 & 0\\
+                    -1 & -2 & -1
+                    \end{bmatrix}$$
+                </p>
+                <p>
+                    This process is also famously known as the Sobel filter.  After applying this filter on the input channels for Emir, this is what is seen:
+                </p>
+                <img src="pictures/emir_sobel.jpg" class="mx-auto d-block" style="width:70%">
+                <p></p>
+                <p>
+                    Now, feeding this through the algorithm and applying the resulting displacement vector yields the following, beautiful image:
+                </p>
+                <img src="pictures/emir_color.jpg" class="mx-auto d-block" style="width:70%">
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row" id=Results>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <h3>Results</h3>
+                Now to view the results of all my hard work :)
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <img src="pictures/cathedral_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">cathedral.jpg | <font color="#03B600">green</font>: [5, 2], <font color="#FE3562">red</font>: [12, 3]</div>
+            </div>
+            <div class="col-sm-5">
+                <img src="pictures/monastery_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">monastery.jpg | <font color="#03B600">green</font>: [-3, 2], <font color="#FE3562">red</font>: [3, 2]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <img src="pictures/tobolsk_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">tobolsk.jpg | <font color="#03B600">green</font>: [3, 3], <font color="#FE3562">red</font>: [6, 3]</div>
+            </div>
+            <div class="col-sm-5">
+                <img src="pictures/emir_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">emir.jpg | <font color="#03B600">green</font>: [49, 24], <font color="#FE3562">red</font>: [107, 40]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <img src="pictures/harvesters_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">harvesters.jpg | <font color="#03B600">green</font>: [60, 18], <font color="#FE3562">red</font>: [125, 11]</div>
+            </div>
+            <div class="col-sm-5">
+                <img src="pictures/icon_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">icon.jpg | <font color="#03B600">green</font>: [40, 16], <font color="#FE3562">red</font>: [89, 23]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <img src="pictures/lady_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">lady.jpg | <font color="#03B600">green</font>: [57, 9], <font color="#FE3562">red</font>: [120, 13]</div>
+            </div>
+            <div class="col-sm-5">
+                <img src="pictures/melons_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">melons.jpg | <font color="#03B600">green</font>: [80, 10], <font color="#FE3562">red</font>: [176, 12]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <img src="pictures/onion_church_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">onion_church.jpg | <font color="#03B600">green</font>: [52, 26], <font color="#FE3562">red</font>: [108, 35]</div>
+            </div>
+            <div class="col-sm-5">
+                <img src="pictures/self_portrait_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">self_portrait.jpg | <font color="#03B600">green</font>: [80, 30], <font color="#FE3562">red</font>: [175, 37]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <img src="pictures/three_generations_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">three_generations.jpg | <font color="#03B600">green</font>: [54, 12], <font color="#FE3562">red</font>: [110, 8]</div>
+            </div>
+            <div class="col-sm-5">
+                <img src="pictures/train_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">train.jpg | <font color="#03B600">green</font>: [42, 9], <font color="#FE3562">red</font>: [90, 33]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <img src="pictures/village_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">village.jpg | <font color="#03B600">green</font>: [64, 10], <font color="#FE3562">red</font>: [137, 21]</div>
+            </div>
+            <div class="col-sm-5">
+                <img src="pictures/workshop_color.jpg" class="mx-auto d-block" style="width:100%">
+                <div class="caption center-block">workshop.jpg | <font color="#03B600">green</font>: [53, -1], <font color="#FE3562">red</font>: [105, -12]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row" id=Results>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <p>
+                    And now, a few images of my personal choice from the Prokudin-Gorskii collection:
+                </p>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <!-- <div class="col-sm-4">
+                <img src="pictures/mosque.jpg" class="mx-auto d-block" style="width:55%">
+            </div> -->
+            <div class="col-sm-10">
+                <img src="pictures/mosque_color.jpg" class="mx-auto d-block" style="width:70%">
+                <div class="caption center-block">mosque.jpg | <font color="#03B600">green</font>: [37, 1], <font color="#FE3562">red</font>: [97, -8]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <!-- <div class="col-sm-4">
+                <img src="pictures/boy.jpg" class="mx-auto d-block" style="width:55%">
+            </div> -->
+            <div class="col-sm-10">
+                <img src="pictures/boy_color.jpg" class="mx-auto d-block" style="width:70%">
+                <div class="caption center-block">boy.jpg | <font color="#03B600">green</font>: [46, -13], <font color="#FE3562">red</font>: [103, -11]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <!-- <div class="col-sm-4">
+                <img src="pictures/girls.jpg" class="mx-auto d-block" style="width:55%">
+            </div> -->
+            <div class="col-sm-10">
+                <img src="pictures/girls_color.jpg" class="mx-auto d-block" style="width:70%">
+                <div class="caption center-block">girls.jpg | <font color="#03B600">green</font>: [-15, 10], <font color="#FE3562">red</font>: [13, 15]</div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+       
+
+    </div>
+
+    
+        
+</body>
+
+</html>
